@@ -38,7 +38,7 @@ public class Case03 {
 	/** 後処理 */
 	@AfterAll
 	static void after() {
-		//closeDriver();
+		closeDriver();
 	}
 
 	@Test
