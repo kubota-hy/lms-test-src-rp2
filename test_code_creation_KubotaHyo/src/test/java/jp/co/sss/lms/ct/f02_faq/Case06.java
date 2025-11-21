@@ -160,32 +160,5 @@ public class Case06 {
 		
 		assertTrue(webDriver.getPageSource().contains("受講者の退職や解雇等"));
 
-		
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
