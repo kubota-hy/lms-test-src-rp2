@@ -123,6 +123,14 @@ public class Case05 {
 	void test05() {
 		// TODO ここに追加
 		
+		webDriver.findElement(By.id("form")).sendKeys("研修");
+		webDriver.findElement(By.cssSelector("input[type='submit'][value='検索']")).click();
+		
+		getEvidence(new Object() {},"test05");
+		
+		assertTrue(webDriver.getPageSource().contains("助成金書類の作成方法が分かりません"));
+		assertTrue(webDriver.getPageSource().contains("研修の申し込みはどのようにすれば良いですか？"));
+
 	}
 
 	@Test
@@ -130,6 +138,11 @@ public class Case05 {
 	@DisplayName("テスト06 「クリア」ボタン押下で入力したキーワードを消去")
 	void test06() {
 		// TODO ここに追加
+		webDriver.findElement(By.cssSelector("input[value='クリア']")).click();
+		WebElement keyword = webDriver.findElement(By.id("form"));
+		
+		getEvidence(new Object() {},"test06");
+		assertTrue(keyword.getAttribute("value").isEmpty());
 	}
 
 }
