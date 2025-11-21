@@ -38,7 +38,7 @@ public class Case03 {
 	/** 後処理 */
 	@AfterAll
 	static void after() {
-		closeDriver();
+		//closeDriver();
 	}
 
 	@Test
@@ -69,11 +69,9 @@ public class Case03 {
 						By.cssSelector("ol.breadcrumb li.active")
 						)
 				);
-		getEvidence(new Object(),"test02");
+		getEvidence(new Object() {},"test02");
 
 		assertEquals("コース詳細", courseDetail.getText());
-
-		// 期待値：マイページ（受講生トップ）が表示される
 
 	}
 

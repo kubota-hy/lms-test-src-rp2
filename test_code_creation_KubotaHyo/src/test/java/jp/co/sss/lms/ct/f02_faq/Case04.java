@@ -1,6 +1,10 @@
 package jp.co.sss.lms.ct.f02_faq;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.Assert.*;
+
+import java.time.Duration;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +13,12 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import jp.co.sss.lms.ct.util.WebDriverUtils;
 
 /**
  * 結合テスト よくある質問機能
@@ -36,6 +46,10 @@ public class Case04 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		// TODO ここに追加
+		goTo("http://localhost:8080/lms");
+		getEvidence(new Object() {},"test01");
+		String pageTitle = WebDriverUtils.webDriver.getTitle();
+		assertEquals("ログイン | LMS", pageTitle);;
 	}
 
 	@Test
@@ -43,6 +57,21 @@ public class Case04 {
 	@DisplayName("テスト02 初回ログイン済みの受講生ユーザーでログイン")
 	void test02() {
 		// TODO ここに追加
+		webDriver.findElement(By.id("loginId")).sendKeys("StudentAA01");
+		webDriver.findElement(By.id("password")).sendKeys("StudentAA02");
+		webDriver.findElement(By.cssSelector("input[type='submit'][value='ログイン']")).click();
+		
+		//DOM構築前に検索するとエラーになるため、表示されるまで待機する
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+
+		WebElement courseDetail = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(
+						By.cssSelector("ol.breadcrumb li.active")
+						)
+				);
+		getEvidence(new Object() {},"test02");
+
+		assertEquals("コース詳細", courseDetail.getText());
 	}
 
 	@Test
@@ -50,6 +79,23 @@ public class Case04 {
 	@DisplayName("テスト03 上部メニューの「ヘルプ」リンクからヘルプ画面に遷移")
 	void test03() {
 		// TODO ここに追加
+		WebElement functionMenu = webDriver.findElement(By.cssSelector("a.dropdown-toggle[role='button']"));
+		functionMenu.click();
+		
+		WebDriverWait wait = new WebDriverWait(webDriver,Duration.ofSeconds(10));
+		
+		WebElement helpMenu = wait.until(
+				ExpectedConditions.elementToBeClickable(By.xpath("//ul[contains(@class,'dropdown-menu')]//a[contains(text(),'ヘルプ')]")
+						)
+				);
+		helpMenu.click();
+		
+		//タイトルは環境ごとに微妙に変わることがあるのでtitleContainsメソッドを利用
+		wait.until(ExpectedConditions.titleContains("ヘルプ"));
+		
+		getEvidence(new Object() {}, "test03");
+		
+		assertTrue(webDriver.getTitle().contains("ヘルプ"));
 	}
 
 	@Test
@@ -57,6 +103,18 @@ public class Case04 {
 	@DisplayName("テスト04 「よくある質問」リンクからよくある質問画面を別タブに開く")
 	void test04() {
 		// TODO ここに追加
+		WebElement faqLink = webDriver.findElement(By.linkText("よくある質問"));
+		
+		faqLink.click();
+		
+		//新しいタブへ切り替える
+		//順番にアクセスする必要があるのでArrayList変換
+		ArrayList<String> tabs = new ArrayList<>(webDriver.getWindowHandles());
+		webDriver.switchTo().window(tabs.get(1));
+		
+		getEvidence(new Object() {},"test04");
+		
+		assertTrue(webDriver.getTitle().contains("よくある質問"));
+		
 	}
-
 }
