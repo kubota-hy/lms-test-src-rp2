@@ -3,6 +3,8 @@ package jp.co.sss.lms.ct.f01_login1;
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.Assert.*;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import jp.co.sss.lms.ct.util.WebDriverUtils;
+
 
 /**
  * 結合テスト ログイン機能①
@@ -30,7 +38,7 @@ public class Case03 {
 	/** 後処理 */
 	@AfterAll
 	static void after() {
-		//closeDriver();
+		closeDriver();
 	}
 
 	@Test
@@ -39,6 +47,9 @@ public class Case03 {
 	void test01() {
 		// TODO ここに追加
 		goTo("http://localhost:8080/lms");
+		getEvidence(new Object() {},"test01");
+		String pageTitle = WebDriverUtils.webDriver.getTitle();
+		assertEquals("ログイン | LMS", pageTitle);
 	}
 
 	@Test
@@ -46,12 +57,24 @@ public class Case03 {
 	@DisplayName("テスト02 初回ログイン済みの受講生ユーザーでログイン")
 	void test02() {
 		// TODO ここに追加
-		 webDriver.findElement(By.id("loginId")).sendKeys("StudentAA01");
-		    webDriver.findElement(By.id("password")).sendKeys("StudentAA01");
-		    webDriver.findElement(By.cssSelector("input[type='submit'][value='ログイン']")).click();
+		webDriver.findElement(By.id("loginId")).sendKeys("StudentAA01");
+		webDriver.findElement(By.id("password")).sendKeys("StudentAA02");
+		webDriver.findElement(By.cssSelector("input[type='submit'][value='ログイン']")).click();
+		
+		//DOM構築前に検索するとエラーになるため、表示されるまで待機する
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
 
-		    // 期待値：マイページ（受講生トップ）が表示される
-		    assertEquals("マイページ | LMS", webDriver.getTitle());
+		WebElement courseDetail = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(
+						By.cssSelector("ol.breadcrumb li.active")
+						)
+				);
+		getEvidence(new Object(),"test02");
+
+		assertEquals("コース詳細", courseDetail.getText());
+
+		// 期待値：マイページ（受講生トップ）が表示される
+
 	}
 
 }
